@@ -1,0 +1,21 @@
+
+<form class="search" (ngSubmit)="onSearch(input)" #f="ngForm">
+    <h2>Search For Games</h2>
+    <input 
+        type="text" 
+        #input
+        required
+        ngModel
+        name="search"
+    >
+    <button type="submit" [disabled]="!f.valid">search</button>
+</form>
+
+
+<div>
+    <ul *ngFor="let game of searchResult">
+        <li style="list-style: none;">
+            <app-game-card [game]="game"></app-game-card>
+        </li>
+    </ul>
+</div>

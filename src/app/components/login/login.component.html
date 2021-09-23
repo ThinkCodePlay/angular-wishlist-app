@@ -1,0 +1,33 @@
+<div class="centered-form">
+  <div class="centered-form__box">
+    <h1>Login</h1>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        formControlName="email"
+        placeholder="Email"
+        id="email"
+      />
+
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        formControlName="password"
+        placeholder="Password"
+        id="passwrd"
+
+      />
+
+      <label style="color: red;" *ngIf="error">{{ error }}</label>
+
+      <button type="submit" [disabled]="!loginForm.valid">Submit</button>
+    </form>
+
+    <br />
+    <hr />
+    <br />
+    <h3 style="text-align: center">{{ loginMode ? "Not Registerd?" : "Already Registerd?" }}</h3>
+    <button (click)="onLoginMode()">{{ loginMode ? "Switch To Register" : "Switch To Login" }}</button>
+  </div>
+</div>

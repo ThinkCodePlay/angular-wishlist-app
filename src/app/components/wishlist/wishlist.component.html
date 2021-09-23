@@ -1,0 +1,13 @@
+<!-- <form class="search" (ngSubmit)="onSearch(input)" #f="ngForm">
+  <h2>Search For Games</h2>
+  <input type="text" #input required ngModel name="search" />
+  <button type="submit" [disabled]="!f.valid">search</button>
+</form> -->
+
+<div>
+  <ul *ngFor="let game of gamesList">
+    <li style="list-style: none">
+      <app-wishlist-card [game]="game"></app-wishlist-card>
+    </li>
+  </ul>
+</div>
