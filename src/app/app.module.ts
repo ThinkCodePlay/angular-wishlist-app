@@ -6,13 +6,13 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { WishlistComponent } from './components/wishlist/wishlist.component';
-import {MatCardModule} from '@angular/material/card';
 import { HeaderComponent } from './components/header/header.component';
 import { SearchGamesComponent } from './components/search-games/search-games.component';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { WishlistCardComponent } from './components/wishlist-card/wishlist-card.component';
+import { AuthInterceptor } from './services/auth-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -30,9 +30,11 @@ import { WishlistCardComponent } from './components/wishlist-card/wishlist-card.
     HttpClientModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

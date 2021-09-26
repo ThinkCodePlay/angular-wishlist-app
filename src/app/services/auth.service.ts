@@ -6,10 +6,16 @@ import { environment } from 'src/environments/environment';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 
+interface LoginResponse {
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  isConnected: boolean = false;
+
   registerUrl = `${environment.SERVER_URI}/user`;
   loginUrl = `${environment.SERVER_URI}/user/login`;
   logoutUrl = `${environment.SERVER_URI}/user/logout`;
@@ -21,21 +27,21 @@ export class AuthService {
   login(email: string, password: string) {
     let auth = new Auth(email, password);
     return this.http
-      .post<Auth>(this.loginUrl, auth, { withCredentials: true })
+      .post<LoginResponse>(this.loginUrl, auth, { withCredentials: true })
       .subscribe(
-        (user) => {
-          console.log(user);
-          this.handelAuthentication(true);
+        (data) => {
+          console.log('data', data);
+          this.handelAuthentication(data.token);
         },
         (err) => {
-          console.log(err);
+          console.log('err', err);
         }
       );
   }
 
   register(email: string, password: string, name: string) {
     let auth = new Auth(email, password, name);
-    return this.http.post<Auth>(this.registerUrl, auth, {
+    return this.http.post<LoginResponse>(this.registerUrl, auth, {
       withCredentials: true,
     });
   }
@@ -44,37 +50,28 @@ export class AuthService {
     this.http
       .post(this.logoutUrl, null, { withCredentials: true })
       .subscribe(() => {
-        console.log('secces log out');
-        this.handelAuthentication(false);
+        this.userConnected.next(false);
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
       });
   }
 
   // broadcast if the user is connected
-  private handelAuthentication(isConnected: boolean) {
+  private handelAuthentication(token: string) {
     {
-      if (isConnected) {
-        localStorage.setItem('user', 'true');
-        this.router.navigate(['/wishlist']);
-      } else {
-        localStorage.clear();
-        this.router.navigate(['/login']);
-      }
-
-      this.userConnected.next(isConnected);
+      localStorage.setItem('token', token);
+      this.isConnected = true;
+      this.router.navigate(['/wishlist']);
+      this.userConnected.next(true);
     }
   }
 
   // this isn't a real login, since that is all handeld via cookies.
   // this is just a fallback incase a refresh happens we store the state in local storage
   autoLogin() {
-    
-    const userData = localStorage.getItem('user');
-    console.log('autoLogin', userData);
-
-    if (!userData) {
-      return this.userConnected.next(false);
-    }
-
-    this.userConnected.next(true);
+    // if (!userData) {
+    //   return this.userConnected.next(false);
+    // }
+    // this.userConnected.next(true);
   }
 }
